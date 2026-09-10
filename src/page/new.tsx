@@ -1,4 +1,4 @@
-import desktopBg from '../assets/desktop/New/New.jpg'
+import desktopBg from '../assets/desktop/new/New.jpg'
 import mobileBg from '../assets/mobile/new/New.png'
 import Navbar from '../components/navbar'
 
