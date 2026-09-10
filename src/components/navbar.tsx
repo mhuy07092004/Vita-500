@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import logo from '../assets/Logo.jpg'
+import { useBuyUnlocked } from '../lib/buy-unlock'
 import { prefetchPage } from '../lib/preload-pages'
 
 const NAV_ITEMS = [
@@ -14,6 +15,7 @@ const NAV_ITEMS = [
 function Navbar() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
+  const buyUnlocked = useBuyUnlocked()
 
   useEffect(() => {
     setOpen(false)
@@ -71,19 +73,12 @@ function Navbar() {
           <ul className="flex items-center gap-8">
             {NAV_ITEMS.map(({ label, path }) => (
               <li key={path}>
-                <NavLink
-                  to={path}
-                  end={path === '/'}
-                  onPointerEnter={() => prefetchPage(path)}
-                  onFocus={() => prefetchPage(path)}
-                  className={({ isActive }) =>
-                    isActive
-                      ? 'border-b-2 border-white pb-0.5 text-lg font-semibold text-[#ffe566]'
-                      : 'text-lg font-medium text-white'
-                  }
-                >
-                  {label}
-                </NavLink>
+                <NavItem
+                  label={label}
+                  path={path}
+                  locked={path === '/buy' && !buyUnlocked}
+                  variant="desktop"
+                />
               </li>
             ))}
           </ul>
@@ -109,25 +104,67 @@ function Navbar() {
           <ul className="flex flex-col items-center gap-8 py-4">
             {NAV_ITEMS.map(({ label, path }) => (
               <li key={path}>
-                <NavLink
-                  to={path}
-                  end={path === '/'}
-                  onPointerEnter={() => prefetchPage(path)}
-                  onFocus={() => prefetchPage(path)}
-                  className={({ isActive }) =>
-                    isActive
-                      ? 'text-4xl font-semibold text-[#ffe566]'
-                      : 'text-4xl font-medium text-white'
-                  }
-                >
-                  {label}
-                </NavLink>
+                <NavItem
+                  label={label}
+                  path={path}
+                  locked={path === '/buy' && !buyUnlocked}
+                  variant="mobile"
+                />
               </li>
             ))}
           </ul>
         </nav>
       </div>
     </header>
+  )
+}
+
+function NavItem({
+  label,
+  path,
+  locked,
+  variant,
+}: {
+  label: string
+  path: string
+  locked: boolean
+  variant: 'desktop' | 'mobile'
+}) {
+  const lockedClass =
+    variant === 'desktop'
+      ? 'pointer-events-none cursor-not-allowed text-lg font-medium text-white/35'
+      : 'pointer-events-none cursor-not-allowed text-4xl font-medium text-white/35'
+
+  if (locked) {
+    return (
+      <span
+        aria-disabled="true"
+        title="Xem hết Home, New, Game và About để mở Buy"
+        className={lockedClass}
+      >
+        {label}
+      </span>
+    )
+  }
+
+  return (
+    <NavLink
+      to={path}
+      end={path === '/'}
+      onPointerEnter={() => prefetchPage(path)}
+      onFocus={() => prefetchPage(path)}
+      className={({ isActive }) =>
+        variant === 'desktop'
+          ? isActive
+            ? 'border-b-2 border-white pb-0.5 text-lg font-semibold text-[#ffe566]'
+            : 'text-lg font-medium text-white'
+          : isActive
+            ? 'text-4xl font-semibold text-[#ffe566]'
+            : 'text-4xl font-medium text-white'
+      }
+    >
+      {label}
+    </NavLink>
   )
 }
 

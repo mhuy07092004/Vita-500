@@ -18,6 +18,10 @@ type CharacterDragSceneProps = {
 
 const ZONES: Zone[] = ['left', 'center', 'right']
 const THRESHOLD_RATIO = 0.35
+/** Resting left/right position vs measured track fit; zone thresholds use base offset only. */
+const SNAP_POSITION_EXTRA_RATIO_MOBILE = 1.5
+const SNAP_POSITION_EXTRA_RATIO_DESKTOP = 3
+const MD_BREAKPOINT_PX = 768
 const SNAP_SPRING = { type: 'spring' as const, stiffness: 300, damping: 30 }
 const BG_CROSSFADE = { duration: 0.35, ease: [0.22, 1, 0.36, 1] as const }
 const CHAR_CROSSFADE = { duration: 0.22, ease: [0.22, 1, 0.36, 1] as const }
@@ -45,11 +49,12 @@ function CharacterDragScene({
   const characterRef = useRef<HTMLDivElement>(null)
   const draggingRef = useRef(false)
   const zoneRef = useRef<Zone>('center')
-  const maxOffsetRef = useRef(0)
+  const zoneMaxOffsetRef = useRef(0)
+  const snapMaxOffsetRef = useRef(0)
 
   const x = useMotionValue(0)
   const [zone, setZone] = useState<Zone>('center')
-  const [maxOffset, setMaxOffset] = useState(0)
+  const [snapMaxOffset, setSnapMaxOffset] = useState(0)
 
   const updateZone = useCallback((next: Zone) => {
     if (zoneRef.current === next) return
@@ -62,9 +67,15 @@ function CharacterDragScene({
     const characterEl = characterRef.current
     if (!track || !characterEl) return
 
-    const nextMax = Math.max(0, (track.offsetWidth - characterEl.offsetWidth) / 2)
-    maxOffsetRef.current = nextMax
-    setMaxOffset((prev) => (Math.abs(prev - nextMax) < 0.5 ? prev : nextMax))
+    const base = Math.max(0, (track.offsetWidth - characterEl.offsetWidth) / 2)
+    const isDesktop = window.matchMedia(`(min-width: ${MD_BREAKPOINT_PX}px)`).matches
+    const snapRatio = isDesktop
+      ? SNAP_POSITION_EXTRA_RATIO_DESKTOP
+      : SNAP_POSITION_EXTRA_RATIO_MOBILE
+    const snap = base * snapRatio
+    zoneMaxOffsetRef.current = base
+    snapMaxOffsetRef.current = snap
+    setSnapMaxOffset((prev) => (Math.abs(prev - snap) < 0.5 ? prev : snap))
   }, [])
 
   useLayoutEffect(() => {
@@ -83,10 +94,10 @@ function CharacterDragScene({
 
   useEffect(() => {
     if (draggingRef.current) return
-    const target = snapX(zoneRef.current, maxOffset)
+    const target = snapX(zoneRef.current, snapMaxOffset)
     if (Math.abs(x.get() - target) < 0.5) return
     animate(x, target, SNAP_SPRING)
-  }, [maxOffset, x])
+  }, [snapMaxOffset, x])
 
   useEffect(() => {
     const sources = [
@@ -123,7 +134,7 @@ function CharacterDragScene({
             <motion.div
               ref={characterRef}
               drag="x"
-              dragConstraints={{ left: -maxOffset, right: maxOffset }}
+              dragConstraints={{ left: -snapMaxOffset, right: snapMaxOffset }}
               dragElastic={0.12}
               dragMomentum={false}
               style={{ x }}
@@ -131,14 +142,15 @@ function CharacterDragScene({
                 draggingRef.current = true
               }}
               onDrag={() => {
-                updateZone(zoneFromX(x.get(), maxOffsetRef.current))
+                updateZone(zoneFromX(x.get(), zoneMaxOffsetRef.current))
               }}
               onDragEnd={() => {
                 draggingRef.current = false
-                const offset = maxOffsetRef.current
-                const nextZone = zoneFromX(x.get(), offset)
+                const zoneOffset = zoneMaxOffsetRef.current
+                const snapOffset = snapMaxOffsetRef.current
+                const nextZone = zoneFromX(x.get(), zoneOffset)
                 updateZone(nextZone)
-                animate(x, snapX(nextZone, offset), SNAP_SPRING)
+                animate(x, snapX(nextZone, snapOffset), SNAP_SPRING)
               }}
               aria-label="Drag character left or right"
               className="pointer-events-auto relative h-auto w-[52%] aspect-[1199/1312] cursor-grab touch-none select-none active:cursor-grabbing md:h-[65.8%] md:w-auto"
