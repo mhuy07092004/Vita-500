@@ -8,12 +8,10 @@ import characterCenter from '../assets/character/Character (in the middle).png'
 import characterLeft from '../assets/character/Character (when dragged to the left).png'
 import characterRight from '../assets/character/Character (when dragged to the right).png'
 import CharacterDragScene from '../components/character-drag-scene'
-import Navbar from '../components/navbar'
 
 function Game() {
   return (
     <div className="relative">
-      <Navbar />
       <CharacterDragScene
         desktopBackgrounds={{
           left: desktopLeftBg,

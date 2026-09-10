@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import logo from '../assets/Logo.jpg'
+import { prefetchPage } from '../lib/preload-pages'
 
 const NAV_ITEMS = [
   { label: 'Home', path: '/' },
@@ -58,6 +59,8 @@ function Navbar() {
         <NavLink
           to="/"
           aria-label="Vita500 home"
+          onPointerEnter={() => prefetchPage('/')}
+          onFocus={() => prefetchPage('/')}
           className="absolute left-8 top-1/2 z-20 -translate-y-[38%]"
         >
           <img
@@ -73,6 +76,8 @@ function Navbar() {
                 <NavLink
                   to={path}
                   end={path === '/'}
+                  onPointerEnter={() => prefetchPage(path)}
+                  onFocus={() => prefetchPage(path)}
                   className={({ isActive }) =>
                     isActive
                       ? 'border-b-2 border-white pb-0.5 text-lg font-semibold text-[#ffe566]'
@@ -109,6 +114,8 @@ function Navbar() {
                 <NavLink
                   to={path}
                   end={path === '/'}
+                  onPointerEnter={() => prefetchPage(path)}
+                  onFocus={() => prefetchPage(path)}
                   className={({ isActive }) =>
                     isActive
                       ? 'text-4xl font-semibold text-[#ffe566]'

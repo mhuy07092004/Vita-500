@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import logo from '../assets/Logo.jpg'
+import { prefetchPage } from '../lib/preload-pages'
 
 const ABOUT_LINKS = [
   { label: 'Who we are', to: '/about' },
@@ -16,7 +17,12 @@ function Footer() {
     <footer className="bg-[#1F2937]">
       <div className="mx-auto grid max-w-6xl grid-cols-1 justify-items-center gap-8 px-5 py-10 text-center sm:grid-cols-2 sm:justify-items-start sm:px-8 sm:text-left lg:grid-cols-4 lg:gap-10 lg:py-14">
         <div>
-          <NavLink to="/" aria-label="Vita500 home">
+          <NavLink
+            to="/"
+            aria-label="Vita500 home"
+            onPointerEnter={() => prefetchPage('/')}
+            onFocus={() => prefetchPage('/')}
+          >
             <img
               src={logo}
               alt="Vita500"
@@ -31,7 +37,12 @@ function Footer() {
             {ABOUT_LINKS.map(({ label, to }) => (
               <li key={label}>
                 {to ? (
-                  <NavLink to={to} className={linkClass}>
+                  <NavLink
+                    to={to}
+                    className={linkClass}
+                    onPointerEnter={() => prefetchPage(to)}
+                    onFocus={() => prefetchPage(to)}
+                  >
                     {label}
                   </NavLink>
                 ) : (
