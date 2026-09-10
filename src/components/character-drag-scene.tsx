@@ -141,7 +141,7 @@ function CharacterDragScene({
                 animate(x, snapX(nextZone, offset), SNAP_SPRING)
               }}
               aria-label="Drag character left or right"
-              className="pointer-events-auto relative h-auto w-[52%] aspect-[1199/1312] cursor-grab touch-none select-none active:cursor-grabbing md:h-[94%] md:w-auto"
+              className="pointer-events-auto relative h-auto w-[52%] aspect-[1199/1312] cursor-grab touch-none select-none active:cursor-grabbing md:h-[65.8%] md:w-auto"
             >
               {ZONES.map((key) => (
                 <motion.img

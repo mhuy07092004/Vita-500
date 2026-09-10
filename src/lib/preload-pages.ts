@@ -10,9 +10,9 @@ import desktopRightBg from '../assets/desktop/minigame/Right_background.jpg'
 import mobileCenterBg from '../assets/mobile/minigame/Background with the character in the center (phone aspect ratio).jpg'
 import mobileLeftBg from '../assets/mobile/minigame/Left_Background.jpg'
 import mobileRightBg from '../assets/mobile/minigame/Righ_Background.jpg'
-import characterCenter from '../assets/character/Character (in the middle).png'
-import characterLeft from '../assets/character/Character (when dragged to the left).png'
-import characterRight from '../assets/character/Character (when dragged to the right).png'
+import characterCenter from '../assets/character/Character_middle.png'
+import characterLeft from '../assets/character/Character_left.png'
+import characterRight from '../assets/character/Character_right.png'
 
 const DESKTOP_MQ = '(min-width: 768px)'
 

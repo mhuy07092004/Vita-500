@@ -11,8 +11,6 @@ const NAV_ITEMS = [
   { label: 'Buy', path: '/buy' },
 ] as const
 
-const MOBILE_NAV_ITEMS = NAV_ITEMS.filter((item) => item.path !== '/buy')
-
 function Navbar() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
@@ -107,9 +105,9 @@ function Navbar() {
         >
           <CloseIcon />
         </button>
-        <nav className="flex flex-1 items-center justify-center">
-          <ul className="flex flex-col items-center gap-10">
-            {MOBILE_NAV_ITEMS.map(({ label, path }) => (
+        <nav className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-6 py-24">
+          <ul className="flex flex-col items-center gap-8 py-4">
+            {NAV_ITEMS.map(({ label, path }) => (
               <li key={path}>
                 <NavLink
                   to={path}
